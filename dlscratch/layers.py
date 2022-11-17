@@ -6,6 +6,7 @@ import numpy as np
 from numpy import ndarray
 from typing import List
 from operations import ParamOperation, Operation
+from spec_ops import *
 
 class Layer(object): 
     """A layer of neurons in a neural network"""
@@ -14,15 +15,16 @@ class Layer(object):
         The number of neurons. Roughly corresponds to
         the "width" of the layer.
         """
-        self._neurons = neuron
+        self._neurons = neurons
         self._first = True
         self._params: List[ndarray] = []
         self._param_grads: List[ndarray] = []
         self._operations: List[Operation] = []
         self._input = None
         self._output = None
+        self._seed = None
         
-    def setup_layer(self, num_in: int) -> None:
+    def setup_layer(self, input_: ndarray) -> None: # changed from num_int
         """
         The setup_layer function must be implemented for
         each layer.
@@ -76,4 +78,34 @@ class Layer(object):
         for operation in self._operations:
             if issubclass(operation.__class__, ParamOperation):
                 self._params.append(operation._param) 
+               
+    class Dense(Layer):
+        """A fully connectred layer that inherits from Layer"""
+        def __init__(self, neurons: int,
+                     activation: Operation = Sigmoid()) -> None:
+            """
+            Requires an activation function upon intitialization
+            """
+            super().__init__(neurons)
+            self._activation = activation
+            
+        def setup_layer(self, input_: ndarray) -> None:
+            """
+            Defines the operations of a fully connected layer
+            """
+            if self._seed:
+                np.random.seed(self._seed) # brought in from NN?
                 
+            self._params = []
+            
+            # weights
+            self._params.append(np.random.randn(input_.shape[1],
+                                                self._neurons))
+            # bias
+            self._params.append(np.random.randn(1, self._neurons))
+            
+            self._operations = [WeightMultiply(self._params[0]),
+                                BiasAdd(self._params[1]),
+                                self._activation]
+            
+            return None
