@@ -8,6 +8,7 @@ Toy Autodiff is a minimalistic library to introduce the concept of automatic dif
 
 
 ## Structure
+```plaintext
 autodiff/                  # Root folder
 ├── autodiff/              # Sub-folder containing core code
 │   ├── __pycache__/
@@ -16,7 +17,7 @@ autodiff/                  # Root folder
 ├── main.py                # Example usage or testing
 ├── pyproject.toml         # Dependency management with Poetry
 └── README.md              # Documentation
-
+```
 
 
 ## Usage
